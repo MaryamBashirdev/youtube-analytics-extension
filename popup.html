@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Keyword Research</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Roboto", "Arial", sans-serif;
+      background: #ffffff;
+      color: #0f0f0f;
+      width: 380px;
+      min-height: 200px;
+      max-height: 580px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      flex-shrink: 0;
+    }
+
+    .header-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f0f0f;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 1px;
+    }
+
+    .search-area {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      flex-shrink: 0;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #0f0f0f;
+      background: #f9fafb;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus {
+      border-color: #3B82F6;
+      background: #ffffff;
+    }
+
+    .search-btn {
+      padding: 9px 14px;
+      background: linear-gradient(135deg, #3B82F6, #6366F1);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    .search-btn:hover { opacity: 0.9; }
+    .search-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    .sort-bar {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    .sort-label {
+      font-size: 11px;
+      color: #6b7280;
+      flex-shrink: 0;
+    }
+
+    .sort-btn {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-size: 11px;
+      color: #374151;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .sort-btn.active {
+      background: #3B82F6;
+      color: white;
+      border-color: #3B82F6;
+    }
+
+    .results-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 16px 16px;
+    }
+
+    .state-msg {
+      text-align: center;
+      padding: 32px 16px;
+      color: #9ca3af;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .state-msg svg {
+      display: block;
+      margin: 0 auto 10px;
+      opacity: 0.4;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .results-count {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .keyword-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #f3f4f6;
+      background: #fafafa;
+      margin-bottom: 6px;
+      transition: background 0.12s, border-color 0.12s;
+    }
+
+    .keyword-card:hover { background: #f3f4f6; border-color: #e5e7eb; }
+
+    .keyword-main { flex: 1; min-width: 0; }
+
+    .keyword-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .keyword-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .comp-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .comp-low { background: #dcfce7; color: #15803d; }
+    .comp-medium { background: #fef3c7; color: #92400e; }
+    .comp-high { background: #fee2e2; color: #991b1b; }
+
+    .volume-text {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .copy-btn {
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      font-size: 11px;
+      color: #374151;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+    .copy-btn.copied { background: #dcfce7; border-color: #86efac; color: #15803d; }
+
+    .error-msg {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #991b1b;
+      margin-top: 8px;
+    }
+
+    .suggestions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .suggestion-chip {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-size: 11px;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .suggestion-chip:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+      color: #1d4ed8;
+    }
+
+    .suggestions-label {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="white" aria-hidden="true">
+      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+  </div>
+  <div>
+    <div class="header-title">Keyword Research</div>
+    <div class="header-sub">YouTube keyword analysis tool</div>
+  </div>
+</div>
+
+<div class="search-area">
+  <div class="search-box">
+    <input
+      type="text"
+      id="keyword-input"
+      class="search-input"
+      placeholder="e.g. how to make money online"
+      maxlength="100"
+    />
+    <button id="search-btn" class="search-btn">Search</button>
+  </div>
+  <div class="sort-bar">
+    <span class="sort-label">Sort:</span>
+    <button class="sort-btn active" data-sort="relevance">Relevance</button>
+    <button class="sort-btn" data-sort="competition-low">Low competition</button>
+    <button class="sort-btn" data-sort="competition-high">High volume</button>
+  </div>
+</div>
+
+<div class="results-area" id="results-area">
+  <div class="state-msg" id="state-msg">
+    <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor">
+      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+    Type a keyword and press Search<br/>to find YouTube keyword insights
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

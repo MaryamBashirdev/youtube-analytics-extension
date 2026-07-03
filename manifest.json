@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Channel Stats Overlay",
+  "version": "1.3.0",
+  "description": "Real YouTube channel analytics, SEO score, keyword research & honest monetization data.",
+  "permissions": ["identity", "storage", "clipboardWrite"],
+  "host_permissions": [
+    "https://www.googleapis.com/*",
+    "https://youtubeanalytics.googleapis.com/*"
+  ],
+  "oauth2": {
+    "client_id": "477876507297-cs8nb382fgj5muvm24njp29aqtrkfj6a.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/yt-analytics.readonly",
+      "https://www.googleapis.com/auth/youtube.readonly"
+    ]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "YouTube Keyword Research"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["config.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["config.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
